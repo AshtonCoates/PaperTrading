@@ -11,21 +11,20 @@ account = dict(client.get_account())
 for i,j in account.items():
     print(i, j)
 
-order_details = MarketOrderRequest(
-    symbol = "SPY",
-    qty = 10,
-    side = OrderSide.BUY,
-    time_in_force = TimeInForce.DAY
-)
+# order_details = MarketOrderRequest(
+#     symbol = "SPY",
+#     qty = 10,
+#     side = OrderSide.BUY,
+#     time_in_force = TimeInForce.DAY
+# )
 
-order = client.submit_order(order_data = order_details)
+# order = client.submit_order(order_data = order_details)
 
-trades = TradingStream(config.API_KEY, config.SECRET_KEY, paper=True)
+# trades = TradingStream(config.API_KEY, config.SECRET_KEY, paper=True)
 
-async def trade_status(data):
-    print(data)
+# async def trade_status(data):
+#     print(data)
 
-trades.subscribe_trade_updates(trade_status)
-trades.run()
-
+# trades.subscribe_trade_updates(trade_status)
+# trades.run()
 

@@ -1,7 +1,5 @@
 # KEY
-
 API_KEY = 'PKMFS382WP3D1P3UW12E'
 
 # Secret Key
-
 SECRET_KEY = 'ECHwuFaKOn3o0mwwwhxnWw26IpuWjpvJEi8rVBUL'
