@@ -14,7 +14,7 @@ from sklearn.linear_model import LinearRegression
 nasdaq_tickers = pd.read_csv('nasdaq_tickers.csv')
 tickers = nasdaq_tickers['Symbol'].tolist()
 
-class reversal:
+class Reversal:
     
     def __init__(self, tickers:list):
 
@@ -53,6 +53,8 @@ class reversal:
 
     def push_to_watchlist(self):
 
+        # search all tickers, add those that fit the criteria to watchlist
+
         for ticker in self.tickers:
             ma_20 = self.get_ma(ticker)[1]
             ma_60 = self.get_ma(ticker, period=60)[1]
@@ -60,6 +62,9 @@ class reversal:
                 self.watchlist.append(ticker)
 
     def buy_query(self) -> list[tickers]:
+
+        # search watchlist, recommend buys if criteria is met
+
         buys = []
         for ticker in self.watchlist:
             ma_20 = self.get_ma(ticker)[1]
