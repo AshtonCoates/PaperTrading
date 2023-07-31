@@ -36,11 +36,46 @@ class reversal:
         self.tickers = yf.tickers(tickers)
         self.watchlist = []
 
-    def get_ma(self, ticker:str, period:int=20):
+    def get_ma(self, ticker:object, period:int=20):
         
+        # returns a list of the last 2 moving averages, where the last item is the most recent
+
         # for now, using 5m periods. This is subject to change and would be helpful if it could be variable, that way different periods could be tested
 
-        self.tickers[ticker].history(period='5m')
+        # we need the last 2 moving averages with a max of 60 periods per average, so 60*5=300 minutes
+        # 5 minutes are added because we need the current and previous moving average 
+        ma_df = self.tickers[ticker].history(period='305m', interval='5m')
 
-    def search(self):
+        current_ma = ma_df.tail(period)
+        previous_ma = ma_df.iloc[len(ma_df)-2: len(ma_df)-period-1: -1]
+
+        return (previous_ma['Close'].mean(), current_ma['Close'].mean())
+
+    def push_to_watchlist(self):
+
         for ticker in self.tickers:
+            ma_20 = self.get_ma(ticker)[1]
+            ma_60 = self.get_ma(ticker, period=60)[1]
+            if ma_20 < ma_60:
+                self.watchlist.append(ticker)
+
+    def buy_query(self) -> list[tickers]:
+        buys = []
+        for ticker in self.watchlist:
+            ma_20 = self.get_ma(ticker)[1]
+            ma_60 = self.get_ma(ticker, period=60)[1]
+            if ma_20 > ma_60:
+                buys.append(ticker)
+        return buys
+    
+    def sell_query(self, positions) -> list[tickers]:
+
+        # search list of current holdings to see which should be sold
+        sells = []
+
+        for ticker in positions:
+            ma = self.get_ma(ticker)
+            if ma[1] < ma[0]:
+                sells.append(ticker)
+
+        return sells
