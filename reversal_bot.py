@@ -16,7 +16,7 @@ tickers = nasdaq_tickers['Symbol'].tolist()
 
 class Reversal:
     
-    def __init__(self, tickers:list):
+    def __init__(self, tickers:list[str]):
 
         '''
         This bot will first check stocks listed on the NASDAQ for a few characteristics, and order their priority based on these characteristics to decide
@@ -33,7 +33,7 @@ class Reversal:
         The trade will be sold when the 20 period moving average decreases from the previous timestamp, showing that it is starting to reverse
         '''
 
-        self.tickers = yf.tickers(tickers)
+        self.tickers = tickers
         self.watchlist = []
 
     def get_ma(self, ticker:object, period:int=20):
@@ -44,7 +44,9 @@ class Reversal:
 
         # we need the last 2 moving averages with a max of 60 periods per average, so 60*5=300 minutes
         # 5 minutes are added because we need the current and previous moving average 
-        ma_df = self.tickers[ticker].history(period='305m', interval='5m')
+
+        # NOTE: the calculation is correct and can be verified with real market software
+        ma_df = yf.Ticker(ticker).history(period='305m', interval='5m')
 
         current_ma = ma_df.tail(period)
         previous_ma = ma_df.iloc[len(ma_df)-2: len(ma_df)-period-1: -1]
