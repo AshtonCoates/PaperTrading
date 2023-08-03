@@ -13,7 +13,7 @@ from sklearn.linear_model import LinearRegression
 # Screener will search NASDAQ tickers, need to convert all possible tickers to a list
 nasdaq_tickers = pd.read_csv('nasdaq_tickers.csv')
 tickers = nasdaq_tickers['Symbol'].tolist()
-
+x
 class Reversal:
     
     def __init__(self, tickers:list[str]):
@@ -35,6 +35,7 @@ class Reversal:
 
         self.tickers = tickers
         self.watchlist = []
+        self.holdings = []
 
     def get_ma(self, ticker:object, period:int=20):
         
@@ -51,13 +52,17 @@ class Reversal:
         current_ma = ma_df.tail(period)
         previous_ma = ma_df.iloc[len(ma_df)-2: len(ma_df)-period-1: -1]
 
-        return (previous_ma['Close'].mean(), current_ma['Close'].mean())
+        return (previous_ma['Close'].mean(), 
+                current_ma['Close'].mean(), 
+                ma_df['Close'].iloc[-1]) # return current MA, previous MA, and stock price
 
     def push_to_watchlist(self):
 
         # search all tickers, add those that fit the criteria to watchlist
 
         for ticker in self.tickers:
+            if ticker in self.holdings:
+                continue
             ma_20 = self.get_ma(ticker)[1]
             ma_60 = self.get_ma(ticker, period=60)[1]
             if ma_20 < ma_60:
@@ -69,10 +74,12 @@ class Reversal:
 
         buys = []
         for ticker in self.watchlist:
-            ma_20 = self.get_ma(ticker)[1]
+            _, ma_20, current_price = self.get_ma(ticker)
             ma_60 = self.get_ma(ticker, period=60)[1]
             if ma_20 > ma_60:
-                buys.append(ticker)
+                buys.append((ticker, current_price))
+            self.watchlist.remove(ticker)
+            self.holdings.append(ticker)
         return buys
     
     def sell_query(self, positions) -> list[tickers]:
@@ -84,5 +91,6 @@ class Reversal:
             ma = self.get_ma(ticker)
             if ma[1] < ma[0]:
                 sells.append(ticker)
+            self.holdings.remove(ticker)
 
         return sells
