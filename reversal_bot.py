@@ -13,7 +13,7 @@ from sklearn.linear_model import LinearRegression
 # Screener will search NASDAQ tickers, need to convert all possible tickers to a list
 nasdaq_tickers = pd.read_csv('nasdaq_tickers.csv')
 tickers = nasdaq_tickers['Symbol'].tolist()
-x
+
 class Reversal:
     
     def __init__(self, tickers:list[str]):

@@ -16,7 +16,7 @@ from reversal_bot import Reversal
 
 class Portfolio():
 
-    def __init__(self, tickers:list[str]):
+    def __init__(self):
 
         '''
         this class will be the portfolio manager for the bot class
@@ -28,11 +28,9 @@ class Portfolio():
 
         when a sell order is given, it will place the order on the given ticker(s)
         '''
-
-        self.tickers = tickers
         
         self.client = TradingClient(api_key = config.API_KEY, secret_key=config.SECRET_KEY, paper=True)
-        self.account = dict(client.get_account())
+        self.account = dict(self.client.get_account())
 
     def buy(self, buys:list[tuple]):
 
