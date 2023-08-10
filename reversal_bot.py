@@ -61,12 +61,14 @@ class Reversal:
         # search all tickers, add those that fit the criteria to watchlist
 
         for ticker in self.tickers:
-            if ticker in self.holdings:
+            if ticker in self.holdings or ticker in self.watchlist:
                 continue
             ma_20 = self.get_ma(ticker)[1]
             ma_60 = self.get_ma(ticker, period=60)[1]
             if ma_20 < ma_60:
                 self.watchlist.append(ticker)
+        
+        print('watchlist updated')
 
     def buy_query(self) -> list[tickers]:
 
@@ -75,19 +77,19 @@ class Reversal:
         buys = []
         for ticker in self.watchlist:
             _, ma_20, current_price = self.get_ma(ticker)
-            ma_60 = self.get_ma(ticker, period=60)[1]
+            _, ma_60, _ = self.get_ma(ticker, period=60)
             if ma_20 > ma_60:
                 buys.append((ticker, current_price))
-            self.watchlist.remove(ticker)
-            self.holdings.append(ticker)
+                self.watchlist.remove(ticker)
+                self.holdings.append(ticker)
         return buys
     
-    def sell_query(self, positions) -> list[tickers]:
+    def sell_query(self) -> list[tickers]:
 
         # search list of current holdings to see which should be sold
         sells = []
 
-        for ticker in positions:
+        for ticker in self.holdings:
             ma = self.get_ma(ticker)
             if ma[1] < ma[0]:
                 sells.append(ticker)

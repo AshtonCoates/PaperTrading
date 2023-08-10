@@ -30,27 +30,37 @@ class Portfolio():
         '''
         
         self.client = TradingClient(api_key = config.API_KEY, secret_key=config.SECRET_KEY, paper=True)
-        self.account = dict(self.client.get_account())
 
     def buy(self, buys:list[tuple]):
 
-        buying_power = self.account['buying_power']
-        buys_per_ticker = buying_power/len(buys) # will not work with small account sizes
-        for buy in buys:
+        account = dict(self.client.get_account())
+        buying_power = float(account['buying_power'])
+        if len(buys) != 0:
 
-            market_order_data = MarketOrderRequest(
-                symbol = buy[0],
-                qty = buying_power // buy[1],
-                side = OrderSide.BUY,
-                time_in_force = TimeInForce.DAY
-            )
+            buys_per_ticker = buying_power/len(buys) # will not work with small account sizes
+            for buy in buys:
 
-            market_order = self.client.submit_order(
-                order_data = market_order_data
-            )
+                market_order_data = MarketOrderRequest(
+                    symbol = buy[0],
+                    qty = (0.8 * buys_per_ticker) // buy[1],
+                    side = OrderSide.BUY,
+                    time_in_force = TimeInForce.DAY
+                )
+                print('ticker:', buy)
+                print('buying power power per ticker:',
+                      buys_per_ticker)
+                print('Total order size:',
+                      ((0.8 * buys_per_ticker) // buy[1])*buy[1])
+
+                market_order = self.client.submit_order(
+                    order_data = market_order_data
+                )
+                print('buy order submitted')
 
     def sell(self, sells:list):
-        
-        for sell in sells:
 
-            self.client.close_position(sell)
+        if len(sells) != 0:
+        
+            for sell in sells:
+                self.client.close_position(sell)
+                print('sell order submitted')

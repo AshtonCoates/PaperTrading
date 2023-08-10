@@ -20,6 +20,8 @@ def read_tickers(filename):
 
 if __name__ == '__main__':
 
+    print('ready to trade')
+
     # (deprecated) list of tickers on the NASDAQ 100
     tickers = read_tickers('nasdaq_100.txt')
 
@@ -33,11 +35,18 @@ if __name__ == '__main__':
             
             bot.push_to_watchlist()
 
+            print(1, bot.watchlist)
+
             buys = bot.buy_query()
             portfolio.buy(buys)
+            time.sleep(10)
+
+            print(2, bot.holdings)
             
-            sells = bot.sell_query(bot.holdings)
+            sells = bot.sell_query()
             portfolio.sell(sells)
+
+            print(3, bot.holdings)
 
         else:
             time.sleep(60)
