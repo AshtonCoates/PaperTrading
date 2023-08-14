@@ -23,8 +23,11 @@ if __name__ == '__main__':
 
     while True:
 
-        current_time = datetime.datetime.now().minute
-        if current_time % 5 == 0:
+        current_time = datetime.datetime.now()
+        if current_time.hour >= 13:
+            print('MARKET CLOSED')
+            quit()
+        if current_time.minute % 5 == 0:
             
             bot.push_to_watchlist()
 
