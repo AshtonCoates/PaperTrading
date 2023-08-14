@@ -5,14 +5,12 @@ For my starting strategy, I want to screen for stocks that have an uptrend over 
 '''
 
 #imports
+from alpaca.trading.client import TradingClient
 import pandas as pd
 import yfinance as yf
 import datetime
 from sklearn.linear_model import LinearRegression
-
-# Screener will search NASDAQ tickers, need to convert all possible tickers to a list
-nasdaq_tickers = pd.read_csv('nasdaq_tickers.csv')
-tickers = nasdaq_tickers['Symbol'].tolist()
+import config
 
 class Reversal:
     
@@ -35,7 +33,7 @@ class Reversal:
 
         self.tickers = tickers
         self.watchlist = []
-        self.holdings = []
+        self.client = TradingClient(api_key = config.API_KEY, secret_key=config.SECRET_KEY, paper=True)
 
     def get_ma(self, ticker:object, period:int=20):
         
@@ -61,16 +59,20 @@ class Reversal:
         # search all tickers, add those that fit the criteria to watchlist
 
         for ticker in self.tickers:
-            if ticker in self.holdings or ticker in self.watchlist:
+            if ticker in [i.symbol for i in self.client.get_all_positions()] or ticker in self.watchlist:
                 continue
-            ma_20 = self.get_ma(ticker)[1]
-            ma_60 = self.get_ma(ticker, period=60)[1]
+            try:
+                ma_20 = self.get_ma(ticker)[1]
+                ma_60 = self.get_ma(ticker, period=60)[1]
+            except IndexError: # handle error when yfinance cannot find ticker
+                self.tickers.remove(ticker)
+                continue
             if ma_20 < ma_60:
                 self.watchlist.append(ticker)
         
         print('watchlist updated')
 
-    def buy_query(self) -> list[tickers]:
+    def buy_query(self) -> list:
 
         # search watchlist, recommend buys if criteria is met
 
@@ -81,18 +83,16 @@ class Reversal:
             if ma_20 > ma_60:
                 buys.append((ticker, current_price))
                 self.watchlist.remove(ticker)
-                self.holdings.append(ticker)
         return buys
     
-    def sell_query(self) -> list[tickers]:
+    def sell_query(self) -> list:
 
         # search list of current holdings to see which should be sold
         sells = []
 
-        for ticker in self.holdings:
+        for ticker in [i.symbol for i in self.client.get_all_positions()]:
             ma = self.get_ma(ticker)
             if ma[1] < ma[0]:
                 sells.append(ticker)
-            self.holdings.remove(ticker)
 
         return sells

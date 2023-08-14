@@ -39,13 +39,14 @@ class Portfolio():
 
             buys_per_ticker = buying_power/len(buys) # will not work with small account sizes
             for buy in buys:
-
+                
                 market_order_data = MarketOrderRequest(
                     symbol = buy[0],
                     qty = (0.8 * buys_per_ticker) // buy[1],
                     side = OrderSide.BUY,
                     time_in_force = TimeInForce.DAY
                 )
+
                 print('ticker:', buy)
                 print('buying power power per ticker:',
                       buys_per_ticker)
