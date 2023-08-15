@@ -39,10 +39,14 @@ class Portfolio():
 
             buys_per_ticker = buying_power/len(buys) # will not work with small account sizes
             for buy in buys:
+
+                qty = (0.8 * buys_per_ticker) // buy[1]
+                if qty == 0:
+                    continue
                 
                 market_order_data = MarketOrderRequest(
                     symbol = buy[0],
-                    qty = (0.8 * buys_per_ticker) // buy[1],
+                    qty = qty,
                     side = OrderSide.BUY,
                     time_in_force = TimeInForce.DAY
                 )

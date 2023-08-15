@@ -78,8 +78,13 @@ class Reversal:
 
         buys = []
         for ticker in self.watchlist:
-            _, ma_20, current_price = self.get_ma(ticker)
-            _, ma_60, _ = self.get_ma(ticker, period=60)
+            try:
+                _, ma_20, current_price = self.get_ma(ticker)
+                _, ma_60, _ = self.get_ma(ticker, period=60)
+            except IndexError:
+                self.tickers.remove(ticker)
+                self.watchlist.remove(ticker)
+                continue
             if ma_20 > ma_60:
                 buys.append((ticker, current_price))
                 self.watchlist.remove(ticker)
