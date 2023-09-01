@@ -6,12 +6,24 @@ from alpaca.trading.stream import TradingStream
 import pandas as pd
 import yfinance as yf
 import time
-import datetime
+import holidays
+from datetime import datetime, date
 import config # file containing API keys
 from reversal_bot import Reversal
 from portfolio import Portfolio
+import logging
 
-if __name__ == '__main__':
+logging.basicConfig(filename='error_log.txt',
+                    level=logging.ERROR,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+
+def main():
+
+    us_holidays = holidays.US()
+    today=date.today()
+    if today in us_holidays:
+        print('HOLIDAY: MARKET CLOSED')
+        quit()
 
     table = pd.read_html('https://stockmarketmba.com/stocksinthenasdaq100.php')
     tickers = table[1]['Symbol'].to_list()
@@ -20,14 +32,18 @@ if __name__ == '__main__':
     bot = Reversal(tickers)
 
     print('READY TO TRADE')
+    started = False
 
     while True:
 
-        current_time = datetime.datetime.now()
+        current_time = datetime.now()
+        print(current_time)
+
         if current_time.hour >= 13:
             print('MARKET CLOSED')
             quit()
-        if current_time.minute % 5 == 0:
+
+        elif current_time.minute % 5 == 0 and current_time.hour >=6:
             
             bot.push_to_watchlist()
 
@@ -41,3 +57,9 @@ if __name__ == '__main__':
 
         else:
             time.sleep(5)
+
+if __name__ == '__main__':
+    try:
+        main()
+    except Exception as e:
+        logging.error('An error occurred: {}'.format(str(e)))
