@@ -8,7 +8,7 @@ import yfinance as yf
 
 from alpaca.trading.client import TradingClient
 from alpaca.trading.enums import OrderSide, TimeInForce
-from alpaca.trading.requests import MarketOrderRequest, StopLossRequest
+from alpaca.trading.requests import MarketOrderRequest, TrailingStopOrderRequest
 from alpaca.trading.stream import TradingStream
 
 import config
@@ -44,11 +44,12 @@ class Portfolio():
                 if qty == 0:
                     continue
                 
-                market_order_data = MarketOrderRequest(
+                market_order_data = TrailingStopOrderRequest(
                     symbol = buy[0],
                     qty = qty,
                     side = OrderSide.BUY,
-                    time_in_force = TimeInForce.DAY
+                    time_in_force = TimeInForce.DAY,
+                    # TODO: add trailing stop loss
                 )
 
                 print('ticker:', buy)

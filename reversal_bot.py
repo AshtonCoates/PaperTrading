@@ -45,7 +45,8 @@ class Reversal:
         # 5 minutes are added because we need the current and previous moving average 
 
         # NOTE: the calculation is correct and can be verified with real market software
-        ma_df = yf.Ticker(ticker).history(period='305m', interval='5m')
+        minutes = '{}m'.format((period+1)*5)
+        ma_df = yf.Ticker(ticker).history(period=minutes, interval='5m')
 
         current_ma = ma_df.tail(period)
         previous_ma = ma_df.iloc[len(ma_df)-2: len(ma_df)-period-1: -1]
