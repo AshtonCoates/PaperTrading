@@ -33,7 +33,6 @@ def main():
     bot = Reversal(tickers)
 
     print('READY TO TRADE')
-    started = False
 
     while True:
 
@@ -44,7 +43,7 @@ def main():
             print('MARKET CLOSED')
             quit()
 
-        elif current_time.minute % 5 == 0 and current_time.hour >=6:
+        elif current_time.minute % 5 == 0:
             
             bot.push_to_watchlist()
 
