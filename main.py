@@ -1,19 +1,20 @@
 # imports
+import logging
+import time
+from datetime import date, datetime
+
+import config  # file containing API keys
+import holidays
+import pandas as pd
+import yfinance as yf
 from alpaca.trading.client import TradingClient
 from alpaca.trading.enums import OrderSide, TimeInForce
 from alpaca.trading.requests import MarketOrderRequest, StopLossRequest
 from alpaca.trading.stream import TradingStream
-import pandas as pd
-import yfinance as yf
-import time
-import holidays
-from datetime import datetime, date
-import config # file containing API keys
-from reversal_bot import Reversal
 from portfolio import Portfolio
-import logging
+from reversal_bot import Reversal
 
-logging.basicConfig(filename='error_log.txt',
+logging.basicConfig(filename='/home/EquityEngine/PaperTrading/error_log.txt',
                     level=logging.ERROR,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
