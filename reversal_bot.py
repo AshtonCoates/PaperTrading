@@ -9,7 +9,6 @@ from alpaca.trading.client import TradingClient
 import pandas as pd
 import yfinance as yf
 import datetime
-from sklearn.linear_model import LinearRegression
 import config
 
 class Reversal:
@@ -19,9 +18,6 @@ class Reversal:
         '''
         This bot will first check stocks listed on the NASDAQ for a few characteristics, and order their priority based on these characteristics to decide
         what trades will be made. The characteristics are as follows (and subject to experimentation):
-
-        The coefficient of a lineear regression of closing priceson date should be positive. The coefficient of this regression will determine highest
-        priority trades
 
         The trade will be put on a watchlist when the 20 period moving average crosses below the 60 period moving average
 
