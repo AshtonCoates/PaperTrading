@@ -1,16 +1,12 @@
-'''
-This script serves as a module to screen for stocks fitting a specific criteria each day.
+import datetime
 
-For my starting strategy, I want to screen for stocks that have an uptrend over a long time period but show a pullback 
-'''
-
-#imports
-from alpaca.trading.client import TradingClient
 import pandas as pd
 import yfinance as yf
-import datetime
+from alpaca.trading.client import TradingClient
 from sklearn.linear_model import LinearRegression
+
 import config
+
 
 class Reversal:
     

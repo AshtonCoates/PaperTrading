@@ -1,17 +1,20 @@
 # imports
+import logging
+import time
+from datetime import date, datetime
+import os
+
+import holidays
+import pandas as pd
+import yfinance as yf
 from alpaca.trading.client import TradingClient
 from alpaca.trading.enums import OrderSide, TimeInForce
 from alpaca.trading.requests import MarketOrderRequest, StopLossRequest
 from alpaca.trading.stream import TradingStream
-import pandas as pd
-import yfinance as yf
-import time
-import holidays
-from datetime import datetime, date
-import config # file containing API keys
-from reversal_bot import Reversal
+
+import config  # file containing API keys
 from portfolio import Portfolio
-import logging
+from reversal_bot import Reversal
 
 logging.basicConfig(filename='error_log.txt',
                     level=logging.ERROR,
@@ -28,7 +31,11 @@ def main():
     table = pd.read_html('https://stockmarketmba.com/stocksinthenasdaq100.php')
     tickers = table[1]['Symbol'].to_list()
 
-    portfolio = Portfolio()
+    # Create dataframe for logging if there isn't one, otherwise load it into memory
+    log_cols = ['Datetime','Order type', 'Ticker', 'Shares', 'Price']
+    log = pd.read_pickle(config.PICKLE_PATH) if os.path.exists(config.PICKLE_PATH) else pd.DataFrame(columns=log_cols)
+
+    portfolio = Portfolio(log)
     bot = Reversal(tickers)
 
     print('READY TO TRADE')
@@ -58,7 +65,4 @@ def main():
             time.sleep(5)
 
 if __name__ == '__main__':
-    try:
         main()
-    except Exception as e:
-        logging.error('An error occurred: {}'.format(str(e)))
