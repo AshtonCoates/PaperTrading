@@ -1,9 +1,9 @@
 import os
 
 # KEY
-API_KEY = 'PK3Z04IP229J3TPB1VFH'
+API_KEY = 'PKGZP18SFMEQQMCW2R0H'
 
 # Secret Key
-SECRET_KEY = 'UlNfKevegfkgJd36gfK7AGss0ceydaaFXcU6uuzS'
+SECRET_KEY = 'ZLabHzQ4IxOOtrzzl9mccXHqVk8IkUtVQwraRPB5'
 
 PICKLE_PATH = os.path.join('pickles', 'order_log')

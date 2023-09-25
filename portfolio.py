@@ -58,7 +58,7 @@ class Portfolio():
                     order_data = market_order_data
                 )
 
-                order_data = {
+                pickle_order_data = {
                     'Datetime'   : datetime.datetime.now(),
                     'Order type' : 'buy',
                     'Ticker'     : buy[0],
@@ -66,9 +66,7 @@ class Portfolio():
                     'Price'      : buy[1]
                 }
 
-                df = pd.DataFrame(order_data)
-                self.order_log.concat(df)
-                df.to_pickle(config.PICKLE_PATH)
+                self.log_trade(pickle_order_data)
 
     def sell(self, sells:list):
 
@@ -77,3 +75,18 @@ class Portfolio():
             for sell in sells:
                 self.client.close_position(sell)
                 print('sell order submitted')
+
+    def log_trade(self, data, log_file_path=config.PICKLE_PATH):
+        '''
+        data should be a dictionary with these keys:
+        Order type
+        Ticker symbol
+        Shares
+        Price
+        (Datetime will be added automatically)
+        '''
+        data['Datetime'] = datetime.datetime.now() # add datetime
+        record = pd.DataFrame(data) # create dataframe to concat to log file
+        log = pd.read_pickle(log_file_path)
+        log = pd.concat([log, record], axis=1)
+        pd.to_pickle(log, log_file_path)
