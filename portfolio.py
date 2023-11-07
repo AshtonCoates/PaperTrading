@@ -12,7 +12,7 @@ from alpaca.trading.requests import (MarketOrderRequest,
 from alpaca.trading.stream import TradingStream
 
 import config
-from reversal_bot import Reversal
+from bots.reversal_bot import Reversal
 
 
 class Portfolio():
@@ -36,7 +36,7 @@ class Portfolio():
     def buy(self, buys:list[tuple]):
 
         account = dict(self.client.get_account())
-        buying_power = float(account['buying_power'])
+        buying_power = float(account['cash'])
         if len(buys) != 0:
 
             buys_per_ticker = buying_power/len(buys) # will not work with small account sizes

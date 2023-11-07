@@ -14,7 +14,7 @@ from alpaca.trading.stream import TradingStream
 
 import config  # file containing API keys
 from portfolio import Portfolio
-from reversal_bot import Reversal
+from bots.reversal_bot import Reversal
 
 logging.basicConfig(filename='error_log.txt',
                     level=logging.ERROR,
