@@ -4,6 +4,7 @@ import pandas as pd
 import yfinance as yf
 from sklearn.neighbors import KNeighborsClassifier
 from alpaca.trading.client import TradingClient
+from datetime import datetime
 
 import config
 
@@ -36,6 +37,16 @@ class Single_knn:
         self.returns_period = '1mo'
         self.highest_returns = True # what should screener look for, highest or lowest returns
 
+        # model vars (to be tested during backtesting)
+        self.lookahead = 5 # number of periods ahead to predict return
+        self.buy_threshold = 0.05
+        self.sell_threshold = 0.025
+        self.num_datapoints = 300
+
+        self.backtest_vars = [self.lookahead, self.buy_threshold, self.sell_threshold, 
+                              self.returns_interval, self.returns_period, self.highest_returns,
+                              self.num_datapoints]
+
         # create a dataset to be used for the trading day
         self.watchlist = self.screen() # look for tickers trending down
         self.data = self.build_data(self.watchlist)
@@ -51,10 +62,10 @@ class Single_knn:
             try: # handle tickers not found on yfinance
                 history = yf.Ticker(ticker).history(period=self.returns_period, 
                                                     interval=self.returns_interval)
-                period_return = (history['Close'].iloc[len(history)-1] - 
-                                history['Open'].iloc[0]) / history['Open'].iloc[0]
+                period_return = (history['Close'].iloc[len(history)-1] /
+                                history['Open'].iloc[0]) - 1
                 returns[ticker] = period_return
-            except IndexError:
+            except:
                 self.tickers.remove(ticker)
                 continue
 
@@ -69,13 +80,31 @@ class Single_knn:
             data[ticker] = self._build_one_df(ticker)
         return data
 
-    def _build_one_df(self, ticker:str) -> pd.DataFrame:
-        return
-
-    def buy_query(self) -> list[str]:
+    def _build_one_df(self, ticker:str, datapoints=self.num_datapoits) -> pd.DataFrame:
         
-        return
-    
-    def sell_query(self) -> list[str]:
+        '''
+        features:
+        stock closing price at preceding period
+        5 period MA value at preceding period
+        10 period MA at preceding period
+        total return over last 10 periods
+        '''
+        
 
-        return
+    def buy_query(self, watchlist:dict[str], buy_threshold:int) -> list[str]:
+        
+        buy_list = []
+        for i in watchlist:
+            if None: #TODO
+                buy_list.append(i)
+        return buy_list
+        
+    
+    def sell_query(self, watchlist:dict[str], sell_threshold:int) -> list[str]:
+
+        sell_list = []
+        for i in watchlist:
+            if None: #TODO
+                sell_list.append(i)
+        return sell_list
+        
