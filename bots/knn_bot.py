@@ -1,10 +1,11 @@
 import datetime
 
+import holidays
 import pandas as pd
 import yfinance as yf
 from sklearn.neighbors import KNeighborsClassifier
 from alpaca.trading.client import TradingClient
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import config
 
@@ -80,15 +81,29 @@ class Single_knn:
             data[ticker] = self._build_one_df(ticker)
         return data
 
-    def _build_one_df(self, ticker:str, datapoints=self.num_datapoits) -> pd.DataFrame:
+    def _build_one_df(self, ticker:str, datapoints:int=1000, returns_period:int=5) -> pd.DataFrame:
         
         '''
+        dependent variable: T-period cumulative return
         features:
-        stock closing price at preceding period
+        current price
+        stock return during preceding period
         5 period MA value at preceding period
         10 period MA at preceding period
         total return over last 10 periods
         '''
+
+        data = pd.DataFrame(columns=['return', 'price', 'yesterday_price', 'ma5', 'ma10', 'return10'])
+        i = datetime.now() - timedelta(days=returns_period)
+        while len(data) < datapoints:
+            if i.weekday() < 5 or i in holidays.US(): # check if trading day
+                continue
+            start_date = i - timedelta(days=15)
+            end_date = i + timedelta(days=returns_period)
+            df = yf.ticker(ticker, start=start_date, end=end_date, interval='1d')
+            history = df.history()
+            print(history.head())
+            
         
 
     def buy_query(self, watchlist:dict[str], buy_threshold:int) -> list[str]:
