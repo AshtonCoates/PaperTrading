@@ -100,7 +100,7 @@ class Single_knn:
                 continue
             start_date = i - timedelta(days=15)
             end_date = i + timedelta(days=returns_period)
-            df = yf.ticker(ticker, start=start_date, end=end_date, interval='1d')
+            df = yf.Ticker(ticker, start=start_date, end=end_date, interval='1d')
             history = df.history()
             print(history.head())
             
