@@ -49,8 +49,10 @@ class Single_knn:
                               self.num_datapoints]
 
         # create a dataset to be used for the trading day
+        '''
         self.watchlist = self.screen() # look for tickers trending down
         self.data = self.build_data(self.watchlist)
+        '''
 
 
     def screen(self) -> list[str]:
@@ -94,18 +96,23 @@ class Single_knn:
         total return over last 10 periods
         '''
 
-        data = pd.DataFrame(columns=['return', 'price', 'yesterday_price', 'ma5', 'ma10', 'return10'])
+        data = []
         i = for_date - timedelta(days=returns_period)
         while len(data) < datapoints:
             if i.weekday() < 5 or i in holidays.US(): # check if trading day
+                i = i - timedelta(days=1)
                 continue
             start_date = i - timedelta(days=15)
             end_date = i + timedelta(days=returns_period)
 
-            df = yf.Ticker(ticker, start=start_date, end=end_date, interval='1d')
-            history = df.history()
-            y = history['Close'] / history['Open']
-            
+            df = yf.Ticker(ticker)
+            history = df.history(start=start_date, end=end_date, interval='1d')
+            y = history.loc[end_date, 'Close'] / history.loc[start_date, 'Open'] - 1
+            print(y)
+
+            row = {'return':y, 'price':None, 'yesterday_price':None, 'ma5':None, 'ma10':None, 'return10':None}
+            data.append(row)
+
             i = i - timedelta(days=1)
             
         
