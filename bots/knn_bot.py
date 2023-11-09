@@ -81,7 +81,8 @@ class Single_knn:
             data[ticker] = self._build_one_df(ticker)
         return data
 
-    def _build_one_df(self, ticker:str, datapoints:int=1000, returns_period:int=5) -> pd.DataFrame:
+    def _build_one_df(self, ticker:str, datapoints:int=1000, returns_period:int=5, 
+                      for_date:datetime=datetime.now()) -> pd.DataFrame:
         
         '''
         dependent variable: T-period cumulative return
@@ -94,15 +95,18 @@ class Single_knn:
         '''
 
         data = pd.DataFrame(columns=['return', 'price', 'yesterday_price', 'ma5', 'ma10', 'return10'])
-        i = datetime.now() - timedelta(days=returns_period)
+        i = for_date - timedelta(days=returns_period)
         while len(data) < datapoints:
             if i.weekday() < 5 or i in holidays.US(): # check if trading day
                 continue
             start_date = i - timedelta(days=15)
             end_date = i + timedelta(days=returns_period)
+
             df = yf.Ticker(ticker, start=start_date, end=end_date, interval='1d')
             history = df.history()
-            print(history.head())
+            y = history['Close'] / history['Open']
+            
+            i = i - timedelta(days=1)
             
         
 
