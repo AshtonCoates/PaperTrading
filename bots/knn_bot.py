@@ -1,13 +1,14 @@
-import datetime
+import random
+from datetime import datetime, timedelta
 
 import holidays
 import pandas as pd
 import yfinance as yf
-from sklearn.neighbors import KNeighborsClassifier
 from alpaca.trading.client import TradingClient
-from datetime import datetime, timedelta
+from sklearn.neighbors import KNeighborsClassifier
 
 import config
+
 
 class Single_knn:
 
@@ -47,6 +48,8 @@ class Single_knn:
         self.backtest_vars = [self.lookahead, self.buy_threshold, self.sell_threshold, 
                               self.returns_interval, self.returns_period, self.highest_returns,
                               self.num_datapoints]
+        
+        self.test_dates = [] # list of dates with no data to backtest
 
         # create a dataset to be used for the trading day
         '''
@@ -102,12 +105,16 @@ class Single_knn:
             if i.weekday() < 5 or i in holidays.US(): # check if trading day
                 i = i - timedelta(days=1)
                 continue
+            if random.rand() >= 0.8:
+                self.test_dates = i
+                i = i - timedelta(days=1)
+                continue
             start_date = i - timedelta(days=15)
-            end_date = i + timedelta(days=returns_period)
+            end_date = i + timedelta(days=returns_period+2)
 
             df = yf.Ticker(ticker)
             history = df.history(start=start_date, end=end_date, interval='1d')
-            y = history.loc[end_date, 'Close'] / history.loc[start_date, 'Open'] - 1
+            y = 
             print(y)
 
             row = {'return':y, 'price':None, 'yesterday_price':None, 'ma5':None, 'ma10':None, 'return10':None}
