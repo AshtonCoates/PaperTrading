@@ -114,8 +114,6 @@ class Single_knn:
 
             df = yf.Ticker(ticker)
             history = df.history(start=start_date, end=end_date, interval='1d')
-            y = 
-            print(y)
 
             row = {'return':y, 'price':None, 'yesterday_price':None, 'ma5':None, 'ma10':None, 'return10':None}
             data.append(row)

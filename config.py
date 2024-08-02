@@ -1,9 +1,11 @@
 import os
 
 # KEY
-API_KEY = 'PKN1K6E24Q1JA22612HF'
+API_KEY = 'PKVGNI0KR8DD7GB5EWJK'
 
 # Secret Key
-SECRET_KEY = '96zKSbABQTHlq1mNQ8ArVui0WaIeMX3h7d8O'
+SECRET_KEY = 'gecnDZhBMzBeyX2VskQzbIHqKXveVXb3dbhBwFSq'
+
+ALPACA_EMERGENCY_CODE = '9c24f182-b276-4fc1-b51a-62d0509eda0d'
 
 PICKLE_PATH = os.path.join('pickles', 'order_log')

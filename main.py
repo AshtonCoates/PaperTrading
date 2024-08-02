@@ -22,6 +22,9 @@ logging.basicConfig(filename='error_log.txt',
 
 def main():
 
+    if not config.ACTIVE:
+        quit()
+
     us_holidays = holidays.US()
     today=date.today()
     if today in us_holidays:
@@ -31,11 +34,7 @@ def main():
     table = pd.read_html('https://stockmarketmba.com/stocksinthenasdaq100.php')
     tickers = table[1]['Symbol'].to_list()
 
-    # Create dataframe for logging if there isn't one, otherwise load it into memory
-    log_cols = ['Datetime','Order type', 'Ticker', 'Shares', 'Price']
-    log = pd.read_pickle(config.PICKLE_PATH) if os.path.exists(config.PICKLE_PATH) else pd.DataFrame(columns=log_cols)
-
-    portfolio = Portfolio(log)
+    portfolio = Portfolio()
     bot = Reversal(tickers)
 
     print('READY TO TRADE')

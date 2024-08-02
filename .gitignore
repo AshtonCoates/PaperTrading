@@ -33,8 +33,11 @@ MANIFEST
 test.ipynb
 testing.ipynb
 
-# Folder containing log dataframes
-pickles/
+# Database
+trade_history.db
+
+# logs and metadata
+logs/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
