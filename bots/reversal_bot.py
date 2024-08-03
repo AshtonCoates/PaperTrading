@@ -1,15 +1,12 @@
-'''
-This script serves as a module to screen for stocks fitting a specific criteria each day.
+import datetime
 
-For my starting strategy, I want to screen for stocks that have an uptrend over a long time period but show a pullback 
-'''
-
-#imports
-from alpaca.trading.client import TradingClient
 import pandas as pd
 import yfinance as yf
-import datetime
+from alpaca.trading.client import TradingClient
+from sklearn.linear_model import LinearRegression
+
 import config
+
 
 class Reversal:
     
@@ -18,6 +15,9 @@ class Reversal:
         '''
         This bot will first check stocks listed on the NASDAQ for a few characteristics, and order their priority based on these characteristics to decide
         what trades will be made. The characteristics are as follows (and subject to experimentation):
+
+        The coefficient of a lineear regression of closing priceson date should be positive. The coefficient of this regression will determine highest
+        priority trades
 
         The trade will be put on a watchlist when the 20 period moving average crosses below the 60 period moving average
 
@@ -41,7 +41,8 @@ class Reversal:
         # 5 minutes are added because we need the current and previous moving average 
 
         # NOTE: the calculation is correct and can be verified with real market software
-        ma_df = yf.Ticker(ticker).history(period='305m', interval='5m')
+        minutes = '{}m'.format((period+1)*5)
+        ma_df = yf.Ticker(ticker).history(period=minutes, interval='5m')
 
         current_ma = ma_df.tail(period)
         previous_ma = ma_df.iloc[len(ma_df)-2: len(ma_df)-period-1: -1]

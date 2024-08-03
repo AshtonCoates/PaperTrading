@@ -2,8 +2,8 @@
 import logging
 import time
 from datetime import date, datetime
+import os
 
-import config  # file containing API keys
 import holidays
 import pandas as pd
 import yfinance as yf
@@ -11,14 +11,19 @@ from alpaca.trading.client import TradingClient
 from alpaca.trading.enums import OrderSide, TimeInForce
 from alpaca.trading.requests import MarketOrderRequest, StopLossRequest
 from alpaca.trading.stream import TradingStream
-from portfolio import Portfolio
-from reversal_bot import Reversal
 
-logging.basicConfig(filename='/home/EquityEngine/PaperTrading/error_log.txt',
+import config  # file containing API keys
+from portfolio import Portfolio
+from bots.reversal_bot import Reversal
+
+logging.basicConfig(filename='error_log.txt',
                     level=logging.ERROR,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 def main():
+
+    if not config.ACTIVE:
+        quit()
 
     us_holidays = holidays.US()
     today=date.today()
@@ -59,7 +64,4 @@ def main():
             time.sleep(5)
 
 if __name__ == '__main__':
-    try:
         main()
-    except Exception as e:
-        logging.error('An error occurred: {}'.format(str(e)))
