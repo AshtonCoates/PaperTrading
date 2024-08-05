@@ -13,6 +13,7 @@ from alpaca.trading.requests import MarketOrderRequest, StopLossRequest
 from alpaca.trading.stream import TradingStream
 
 import config  # file containing API keys
+from db_init import db_init
 from portfolio import Portfolio
 from bots.reversal_bot import Reversal
 
@@ -25,6 +26,8 @@ def main():
     if not config.ACTIVE:
         quit()
 
+    db_init()
+
     us_holidays = holidays.US()
     today=date.today()
     if today in us_holidays:
@@ -35,7 +38,7 @@ def main():
     tickers = table[1]['Symbol'].to_list()
 
     portfolio = Portfolio()
-    bot = Reversal(tickers)
+    bots = [Reversal(tickers)]
 
     print('READY TO TRADE')
 
@@ -49,14 +52,16 @@ def main():
             quit()
 
         elif current_time.minute % 5 == 0:
-            
-            bot.push_to_watchlist()
 
-            buys = bot.buy_query()
-            portfolio.buy(buys)
+            for bot in bots:
             
-            sells = bot.sell_query()
-            portfolio.sell(sells)
+                bot.push_to_watchlist()
+
+                buys = bot.buy_query()
+                portfolio.buy(buys)
+                
+                sells = bot.sell_query()
+                portfolio.sell(sells)
 
             time.sleep(60)
 

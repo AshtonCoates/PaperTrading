@@ -36,7 +36,7 @@ class Portfolio():
     def buy(self, buys:list[tuple]):
 
         account = dict(self.client.get_account())
-        buying_power = float(account['cash'])
+        buying_power = float(account['cash'])/2
         if len(buys) != 0:
 
             buys_per_ticker = buying_power/len(buys) # will not work with small account sizes
